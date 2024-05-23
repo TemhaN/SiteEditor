@@ -184,32 +184,39 @@ elementsList.ondrop = event => {
 		updateCode();
 	}
 };
-
 function updateCode() {
 	let codeContainer = document.getElementById('code');
 	let sectionTitle = document.getElementById('section-title').value;
-	let styles = '';
+	let htmlContent = '';
+	let styleContent = '';
 
-	// Generate styles for each element
+	// Generate HTML and styles for each element
 	Array.from(editor.children).forEach(child => {
 		let className = child.className;
 		let style = window.getComputedStyle(child);
-		if (child.tagName === 'P') {
-			styles += `.${className} { top: ${child.style.top}; left: ${child.style.left}; position: absolute;`;
-			styles += ` font-size: ${style.fontSize}; font-weight: ${style.fontWeight}; font-style: ${style.fontStyle};`;
-			styles += '}\n';
-		} else if (child.tagName === 'IMG') {
-			styles += `.${className} { top: ${child.style.top}; left: ${child.style.left}; position: absolute;`;
-			styles += ` width: ${style.width}; height: ${style.height};`;
-			styles += '}\n';
-		} else if (child.tagName === 'DIV') {
-			styles += `.${className} { top: ${child.style.top}; left: ${child.style.left}; position: absolute;`;
-			styles += '}\n';
+		let elementStyle = `top: ${child.style.top}; left: ${child.style.left}; position: absolute;`;
+
+		// Add HTML for each element
+		if (
+			child.tagName === 'P' ||
+			child.tagName === 'DIV' ||
+			child.tagName === 'IMG'
+		) {
+			htmlContent += `<${child.tagName.toLowerCase()} class="${className}">${
+				child.innerText
+			}</${child.tagName.toLowerCase()}>`;
 		}
+
+		// Build style content for each element
+		if (child.tagName === 'P') {
+			elementStyle += ` font-size: ${style.fontSize}; font-weight: ${style.fontWeight}; font-style: ${style.fontStyle};`;
+		} else if (child.tagName === 'IMG') {
+			elementStyle += ` width: ${style.width}; height: ${style.height};`;
+		}
+
+		styleContent += `.${className} { ${elementStyle} }\n`;
 	});
 
-	codeContainer.innerText = `<section title="${sectionTitle}">\n${editor.innerHTML.replace(
-		/contenteditable="true"/g,
-		''
-	)}\n</section>\n<style>\n${styles}</style>`;
+	let code = `<section title="${sectionTitle}">\n${htmlContent}\n</section>\n<style>\n${styleContent}</style>`;
+	codeContainer.innerText = code;
 }
