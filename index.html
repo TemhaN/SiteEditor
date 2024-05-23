@@ -1,330 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Website Editor</title>
-		<style>
-			body {
-				font-family: Arial, sans-serif;
-			}
-			#editor {
-				width: 60%;
-				height: 500px;
-				border: 1px solid #ccc;
-				position: relative;
-				margin: 20px auto;
-				overflow: auto;
-				display: inline-block;
-			}
-			#element-list {
-				width: 20%;
-				height: 500px;
-				border: 1px solid #ccc;
-				margin: 20px auto;
-				overflow: auto;
-				display: inline-block;
-				vertical-align: top;
-			}
-			.draggable {
-				position: absolute;
-				cursor: move;
-				border: 1px dashed #000;
-				padding: 5px;
-				background-color: #fff;
-			}
-			.toolbar,
-			.section-name {
-				text-align: center;
-				margin: 20px auto;
-			}
-			.toolbar button,
-			.toolbar input {
-				margin: 5px;
-				padding: 10px 20px;
-				cursor: pointer;
-			}
-			.section-name input {
-				padding: 10px;
-				width: 50%;
-			}
-			.editor-tools {
-				display: none;
-				position: absolute;
-				background-color: #fff;
-				border: 1px solid #ccc;
-				padding: 10px;
-				z-index: 1000;
-			}
-			#code {
-				width: 80%;
-				height: 150px;
-				border: 1px solid #ccc;
-				margin: 20px auto;
-				padding: 10px;
-				font-family: monospace;
-				white-space: pre-wrap;
-			}
-			#element-list ul {
-				list-style-type: none;
-				padding: 0;
-			}
-			#element-list li {
-				padding: 5px;
-				border: 1px solid #ccc;
-				margin: 5px 0;
-				cursor: pointer;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="section-name">
-			<input
-				type="text"
-				id="section-title"
-				placeholder="Enter section title"
-				oninput="updateCode()"
-			/>
-		</div>
-		<div class="toolbar">
-			<button onclick="addText()">Add Text</button>
-			<button onclick="addImage()">Add Image</button>
-			<button onclick="addDiv()">Add Div</button>
-		</div>
-		<div id="editor" onclick="hideTools(event)"></div>
-		<div id="element-list">
-			<ul id="elements"></ul>
-		</div>
-		<pre id="code"></pre>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Editor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="section-name">
+        <input type="text" id="section-title" placeholder="Enter section title" oninput="updateCode()">
+    </div>
+    <div class="toolbar">
+        <button onclick="addText()">Add Text</button>
+        <button onclick="addImage()">Add Image</button>
+        <button onclick="addDiv()">Add Div</button>
+    </div>
+    <div id="editor" onclick="hideTools(event)"></div>
+    <div id="element-list">
+        <ul id="elements"></ul>
+    </div>
+    <pre id="code"></pre>
+    <style id="dynamic-styles"></style>
 
-		<div id="editor-tools" class="editor-tools">
-			<div id="text-tools">
-				<label for="text-content">Content:</label>
-				<input
-					type="text"
-					id="text-content"
-					oninput="updateTextContent()"
-				/><br />
-				<label for="font-size">Font Size:</label>
-				<input
-					type="number"
-					id="font-size"
-					oninput="updateTextFontSize()"
-				/><br />
-				<label for="font-weight">Font Weight:</label>
-				<input
-					type="number"
-					id="font-weight"
-					oninput="updateTextFontWeight()"
-				/><br />
-				<label for="font-style">Font Style:</label>
-				<select id="font-style" onchange="updateTextFontStyle()">
-					<option value="normal">Normal</option>
-					<option value="italic">Italic</option>
-					<option value="bold">Bold</option>
-				</select>
-			</div>
-			<div id="image-tools">
-				<label for="image-src">Image URL:</label>
-				<input type="text" id="image-src" oninput="updateImageSrc()" /><br />
-				<label for="image-width">Width:</label>
-				<input
-					type="number"
-					id="image-width"
-					oninput="updateImageSize()"
-				/><br />
-				<label for="image-height">Height:</label>
-				<input type="number" id="image-height" oninput="updateImageSize()" />
-			</div>
-		</div>
+    <div id="editor-tools" class="editor-tools">
+        <div id="text-tools">
+            <label for="text-content">Content:</label>
+            <input type="text" id="text-content" oninput="updateTextContent()"><br>
+            <label for="font-size">Font Size:</label>
+            <input type="number" id="font-size" oninput="updateTextFontSize()"><br>
+            <label for="font-weight">Font Weight:</label>
+            <input type="number" id="font-weight" oninput="updateTextFontWeight()"><br>
+            <label for="font-style">Font Style:</label>
+            <select id="font-style" onchange="updateTextFontStyle()">
+                <option value="normal">Normal</option>
+                <option value="italic">Italic</option>
+                <option value="bold">Bold</option>
+            </select>
+        </div>
+        <div id="image-tools">
+            <label for="image-src">Image URL:</label>
+            <input type="text" id="image-src" oninput="updateImageSrc()"><br>
+            <label for="image-width">Width:</label>
+            <input type="number" id="image-width" oninput="updateImageSize()"><br>
+            <label for="image-height">Height:</label>
+            <input type="number" id="image-height" oninput="updateImageSize()">
+        </div>
+    </div>
 
-		<script>
-			let editor = document.getElementById('editor');
-			let elementsList = document.getElementById('elements');
-			let editorTools = document.getElementById('editor-tools');
-			let activeElement = null;
-			let elementCounter = {
-				text: 0,
-				image: 0,
-				div: 0,
-			};
-
-			function addText() {
-				elementCounter.text++;
-				let textElement = document.createElement('div');
-				textElement.className = `draggable text_${elementCounter.text}`;
-				textElement.contentEditable = true;
-				textElement.innerText = 'Editable Text';
-				addElement(textElement);
-			}
-
-			function addImage() {
-				elementCounter.image++;
-				let imgElement = document.createElement('img');
-				imgElement.className = `draggable image_${elementCounter.image}`;
-				imgElement.src = 'https://via.placeholder.com/100';
-				imgElement.style.width = '100px';
-				imgElement.style.height = '100px';
-				addElement(imgElement);
-			}
-
-			function addDiv() {
-				elementCounter.div++;
-				let divElement = document.createElement('div');
-				divElement.className = `draggable div_${elementCounter.div}`;
-				divElement.style.border = '1px solid #ccc';
-				divElement.style.padding = '10px';
-				divElement.innerText = 'Container';
-				addElement(divElement);
-				updateElementsList();
-			}
-
-			function addElement(element) {
-				element.style.top = '50px';
-				element.style.left = '50px';
-				element.onmousedown = dragMouseDown;
-				element.onclick = showTools;
-				editor.appendChild(element);
-				updateElementsList();
-				updateCode();
-			}
-
-			function dragMouseDown(e) {
-				e = e || window.event;
-				e.preventDefault();
-
-				let element = this;
-				let offsetX = e.clientX - element.offsetLeft;
-				let offsetY = e.clientY - element.offsetTop;
-
-				document.onmouseup = closeDragElement;
-				document.onmousemove = elementDrag;
-
-				function elementDrag(e) {
-					e = e || window.event;
-					e.preventDefault();
-
-					element.style.top = e.clientY - offsetY + 'px';
-					element.style.left = e.clientX - offsetX + 'px';
-				}
-
-				function closeDragElement() {
-					document.onmouseup = null;
-					document.onmousemove = null;
-					updateCode();
-				}
-			}
-
-			function showTools(event) {
-				event.stopPropagation();
-				activeElement = event.target;
-				let rect = activeElement.getBoundingClientRect();
-				editorTools.style.top = rect.bottom + 'px';
-				editorTools.style.left = rect.left + 'px';
-				editorTools.style.display = 'block';
-
-				if (
-					activeElement.tagName === 'DIV' &&
-					!activeElement.classList.contains('draggable')
-				) {
-					document.getElementById('text-tools').style.display = 'block';
-					document.getElementById('image-tools').style.display = 'none';
-					document.getElementById('text-content').value =
-						activeElement.innerText;
-					document.getElementById('font-size').value = window
-						.getComputedStyle(activeElement)
-						.fontSize.replace('px', '');
-					document.getElementById('font-weight').value =
-						window.getComputedStyle(activeElement).fontWeight;
-					document.getElementById('font-style').value =
-						window.getComputedStyle(activeElement).fontStyle;
-				} else if (activeElement.tagName === 'IMG') {
-					document.getElementById('text-tools').style.display = 'none';
-					document.getElementById('image-tools').style.display = 'block';
-					document.getElementById('image-src').value = activeElement.src;
-					document.getElementById('image-width').value = activeElement.width;
-					document.getElementById('image-height').value = activeElement.height;
-				}
-			}
-
-			function hideTools(event) {
-				if (event.target !== activeElement) {
-					editorTools.style.display = 'none';
-				}
-			}
-
-			function updateTextContent() {
-				activeElement.innerText = document.getElementById('text-content').value;
-				updateCode();
-			}
-
-			function updateTextFontSize() {
-				activeElement.style.fontSize =
-					document.getElementById('font-size').value + 'px';
-				updateCode();
-			}
-
-			function updateTextFontWeight() {
-				activeElement.style.fontWeight =
-					document.getElementById('font-weight').value;
-				updateCode();
-			}
-
-			function updateTextFontStyle() {
-				activeElement.style.fontStyle =
-					document.getElementById('font-style').value;
-				updateCode();
-			}
-
-			function updateImageSrc() {
-				activeElement.src = document.getElementById('image-src').value;
-				updateCode();
-			}
-
-			function updateImageSize() {
-				activeElement.style.width =
-					document.getElementById('image-width').value + 'px';
-				activeElement.style.height =
-					document.getElementById('image-height').value + 'px';
-				updateCode();
-			}
-
-			function updateElementsList() {
-				elementsList.innerHTML = '';
-				Array.from(editor.children).forEach((child, index) => {
-					let listItem = document.createElement('li');
-					listItem.innerText = `${child.tagName.toLowerCase()}_${index + 1}`;
-					listItem.onclick = () => {
-						activeElement = child;
-						showTools({ target: child });
-					};
-					elementsList.appendChild(listItem);
-				});
-			}
-
-			function updateCode() {
-				let codeContainer = document.getElementById('code');
-				let sectionTitle = document.getElementById('section-title').value;
-				let styles = '';
-
-				// Generate styles for each element
-				Array.from(editor.children).forEach(child => {
-					let className = child.className;
-					let style = window.getComputedStyle(child);
-					styles += `.${className} { top: ${child.style.top}; left: ${child.style.left}; position: absolute;`;
-					if (child.tagName === 'DIV') {
-						styles += ` font-size: ${style.fontSize}; font-weight: ${style.fontWeight}; font-style: ${style.fontStyle};`;
-					} else if (child.tagName === 'IMG') {
-						styles += ` width: ${style.width}; height: ${style.height};`;
-					}
-					styles += '}\n';
-				});
-
-				codeContainer.innerText = `<section title="${sectionTitle}">\n${editor.innerHTML.replace(
-					/contenteditable="true"/g,
-					''
-				)}\n</section>\n<style>\n${styles}</style>`;
-			}
-		</script>
-	</body>
+    <script src="script.js"></script>
+</body>
 </html>

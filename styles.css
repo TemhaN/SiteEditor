@@ -1,0 +1,62 @@
+body {
+    font-family: Arial, sans-serif;
+}
+#editor {
+    width: 60%;
+    height: 500px;
+    border: 1px solid #ccc;
+    position: relative;
+    margin: 20px auto;
+    overflow: auto;
+    display: inline-block;
+    vertical-align: top;
+}
+#element-list {
+    width: 20%;
+    height: 500px;
+    border: 1px solid #ccc;
+    margin: 20px;
+    overflow: auto;
+    display: inline-block;
+    vertical-align: top;
+}
+.toolbar, .section-name {
+    text-align: center;
+    margin: 20px auto;
+}
+.toolbar button, .toolbar input {
+    margin: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+.section-name input {
+    padding: 10px;
+    width: 50%;
+}
+.editor-tools {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    z-index: 1000;
+}
+#code {
+    width: 80%;
+    height: 150px;
+    border: 1px solid #ccc;
+    margin: 20px auto;
+    padding: 10px;
+    font-family: monospace;
+    white-space: pre-wrap;
+}
+#element-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+#element-list li {
+    padding: 5px;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    cursor: pointer;
+}
