@@ -1,0 +1,12 @@
+{
+  "files": {
+    "main.js": "/SiteEditor/static/js/main.c3e02570.js",
+    "static/js/422.d8f83471.chunk.js": "/SiteEditor/static/js/422.d8f83471.chunk.js",
+    "index.html": "/SiteEditor/index.html",
+    "main.c3e02570.js.map": "/SiteEditor/static/js/main.c3e02570.js.map",
+    "422.d8f83471.chunk.js.map": "/SiteEditor/static/js/422.d8f83471.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.c3e02570.js"
+  ]
+}
